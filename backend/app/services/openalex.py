@@ -24,14 +24,17 @@ def search_papers(query: str, limit: int = 10) -> list[Paper]:
         "per-page": limit,
     }
 
-    response = requests.get(
-        BASE_URL,
-        params=params,
-        timeout=10,
-    )
+    response = requests.get(BASE_URL, params=params, timeout=10)
+
+    if response.status_code in (429, 503):
+        retry_after = response.headers.get("Retry-After", "unknown")
+        raise RuntimeError(
+            f"OpenAlex is temporarily unavailable "
+            f"(HTTP {response.status_code}). "
+            f"Retry after: {retry_after} seconds."
+        )
 
     response.raise_for_status()
-
     data = response.json()
 
     papers = []

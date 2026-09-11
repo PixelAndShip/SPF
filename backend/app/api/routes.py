@@ -1,10 +1,17 @@
+from fastapi import APIRouter, HTTPException
+
 from app.models.search import SearchRequest
 from app.services.search import search
-from fastapi import APIRouter
 
 router = APIRouter()
 
 
 @router.post("/search")
 def server_search_papers(request: SearchRequest):
-    return search(request.keywords)
+    try:
+        return search(request.keywords)
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=503,
+            detail=str(error),
+        )
