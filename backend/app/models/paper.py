@@ -10,8 +10,6 @@ class Paper(BaseModel):
     citation_count: int = 0
     url: str | None = None
     pdf_url: str | None = None
-
     ranking_score: float = 0.0
-
     llm_score: float | None = None
     llm_explanation: str | None = None
